@@ -374,6 +374,37 @@ const App = () => {
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     touchStart.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+    
+    // Also update mouse position for particle repulsion
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      mousePos.current = {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      };
+    }
+  };
+
+  // Handle touch move for particle repulsion effect
+  const handleTouchMove = (e) => {
+    if (!containerRef.current) return;
+    const touch = e.touches[0];
+    const rect = containerRef.current.getBoundingClientRect();
+    mousePos.current = {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    };
+
+    // Update active lane while dragging
+    if (!lockedLane) {
+      const usableHeight = dimensions.h * 0.65;
+      const topOffset = dimensions.h * 0.15;
+      const laneHeight = usableHeight / 4;
+      const adjustedY = mousePos.current.y - topOffset;
+      const laneIndex = Math.floor(adjustedY / laneHeight);
+      if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) setActiveLane(laneIndex);
+      else setActiveLane(null);
+    }
   };
 
   const handleTouchEnd = (e) => {
@@ -411,9 +442,15 @@ const App = () => {
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
+        onMouseLeave={() => mousePos.current = { x: -1000, y: -1000 }}
         onClick={handleClick}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={(e) => {
+          handleTouchEnd(e);
+          // Reset mouse position when touch ends so particles return
+          mousePos.current = { x: -1000, y: -1000 };
+        }}
         className="absolute top-0 left-0 cursor-crosshair z-10"
       />
 
