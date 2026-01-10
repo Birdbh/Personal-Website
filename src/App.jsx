@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 // --- DATA SOURCE ---
 const dataStreams = {
@@ -11,7 +11,7 @@ const dataStreams = {
         date: "June 2025 - Present",
         loc: "New York, NY",
         log: ">> Executing projects to create an enterprise-wide common data model and applying advanced analytics to core processes.",
-        log2: ">> Leading development of data products to increase yield for the AMRAAM missile and driving data standardization initiatives within Xeta Cloud.",
+        log2: ">> Development of data products to increase yield for AMRAAM and driving data standardization initiatives within Xeta Cloud.",
         status: "ACTIVE"
       },
       {
@@ -132,11 +132,23 @@ const App = () => {
   const [activeLane, setActiveLane] = useState(null);
   const [lockedLane, setLockedLane] = useState(null);
   const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
+  const [isMobile, setIsMobile] = useState(false);
 
   // --- PARTICLE SYSTEM ---
   const particles = useRef([]);
   const animationFrameId = useRef(null);
   const mousePos = useRef({ x: -1000, y: -1000 });
+  
+  // Touch tracking to differentiate tap from scroll
+  const touchStart = useRef({ x: 0, y: 0, time: 0 });
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize Particles
   useEffect(() => {
@@ -195,7 +207,10 @@ const App = () => {
     if (!canvasRef.current || dimensions.w === 0) return;
     
     const ctx = canvasRef.current.getContext('2d');
-    const laneHeight = dimensions.h / 4;
+    // Tighter spacing - use 70% of height centered, leaving room for header/footer
+    const usableHeight = dimensions.h * 0.65;
+    const topOffset = dimensions.h * 0.15;
+    const laneHeight = usableHeight / 4;
     
     const render = () => {
       // Clear with trail effect
@@ -206,7 +221,7 @@ const App = () => {
 
       // Draw Lines & Labels
       streamKeys.forEach((key, index) => {
-        const yPos = index * laneHeight;
+        const yPos = topOffset + (index * laneHeight);
         const color = dataStreams[key].color;
         const isHovered = activeLane === index;
         const isLocked = lockedLane === key;
@@ -219,16 +234,16 @@ const App = () => {
         ctx.lineWidth = isLocked ? 2 : 1;
         ctx.stroke();
 
-        // Draw Label
-        ctx.font = '12px "Courier New", monospace';
-        ctx.fillStyle = isLocked || isHovered ? color : '#444';
+        // Draw Label - larger text
+        ctx.font = '14px "Courier New", monospace';
+        ctx.fillStyle = isLocked || isHovered ? color : '#555';
         const label = `${key.toUpperCase()}_STREAM_0${index+1}`;
-        ctx.fillText(label, 20, yPos + laneHeight / 2 - 10);
+        ctx.fillText(label, 20, yPos + laneHeight / 2 - 12);
       });
 
       // Update and Draw Particles
       particles.current.forEach(p => {
-        const laneY = (p.lane * laneHeight) + (laneHeight / 2);
+        const laneY = topOffset + (p.lane * laneHeight) + (laneHeight / 2);
         const color = dataStreams[p.laneKey].color;
         
         const isHovered = activeLane === p.lane;
@@ -308,7 +323,7 @@ const App = () => {
     return () => cancelAnimationFrame(animationFrameId.current);
   }, [dimensions, activeLane, lockedLane]);
 
-  // Handle Mouse Move
+  // Handle Mouse Move / Touch
   const handleMouseMove = (e) => {
     if (!canvasRef.current || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -318,18 +333,68 @@ const App = () => {
     };
 
     if (!lockedLane) {
-      const laneHeight = dimensions.h / 4;
-      const laneIndex = Math.floor(mousePos.current.y / laneHeight);
-      if (laneIndex >= 0 && laneIndex < 4) setActiveLane(laneIndex);
+      const usableHeight = dimensions.h * 0.65;
+      const topOffset = dimensions.h * 0.15;
+      const laneHeight = usableHeight / 4;
+      const adjustedY = mousePos.current.y - topOffset;
+      const laneIndex = Math.floor(adjustedY / laneHeight);
+      if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) setActiveLane(laneIndex);
       else setActiveLane(null);
     }
   };
 
-  const handleClick = () => {
-    if (activeLane !== null) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    const rect = containerRef.current.getBoundingClientRect();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = clientY - rect.top;
+    const usableHeight = dimensions.h * 0.65;
+    const topOffset = dimensions.h * 0.15;
+    const laneHeight = usableHeight / 4;
+    const adjustedY = y - topOffset;
+    const laneIndex = Math.floor(adjustedY / laneHeight);
+    
+    if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) {
       const keys = Object.keys(dataStreams);
-      if (lockedLane === keys[activeLane]) setLockedLane(null);
-      else setLockedLane(keys[activeLane]);
+      if (lockedLane === keys[laneIndex]) {
+        setLockedLane(null);
+      } else {
+        setLockedLane(keys[laneIndex]);
+      }
+    }
+  };
+
+  // Touch handlers to differentiate tap from scroll
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+  };
+
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - touchStart.current.x);
+    const dy = Math.abs(touch.clientY - touchStart.current.y);
+    const dt = Date.now() - touchStart.current.time;
+    
+    // Only register as tap if moved less than 10px and less than 300ms
+    if (dx < 10 && dy < 10 && dt < 300) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const y = touch.clientY - rect.top;
+      const usableHeight = dimensions.h * 0.65;
+      const topOffset = dimensions.h * 0.15;
+      const laneHeight = usableHeight / 4;
+      const adjustedY = y - topOffset;
+      const laneIndex = Math.floor(adjustedY / laneHeight);
+      
+      if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) {
+        const keys = Object.keys(dataStreams);
+        if (lockedLane === keys[laneIndex]) {
+          setLockedLane(null);
+        } else {
+          setLockedLane(keys[laneIndex]);
+        }
+      }
     }
   };
 
@@ -342,31 +407,36 @@ const App = () => {
         ref={canvasRef}
         onMouseMove={handleMouseMove}
         onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         className="absolute top-0 left-0 cursor-crosshair z-10"
       />
 
-       {/* HEADER - Single Line Top Left */}
-       <div className="absolute top-2 left-2 z-30 font-mono text-xs pointer-events-auto">
-        <div className="flex items-center gap-4 bg-[#050505]/80 p-2 rounded border border-gray-900/50 backdrop-blur-sm shadow-sm shadow-black">
-          <div className="flex items-center gap-2">
-            <span className="text-green-500">➜</span>
-            <span className="text-white font-bold tracking-wide">HEANAN BIRD</span>
-            <span className="text-gray-600">::</span>
-            <span className="text-gray-400">PROGRAM MANAGER</span>
+       {/* HEADER - Responsive */}
+       <div className="absolute top-2 left-2 right-2 md:right-auto z-30 font-mono text-sm md:text-base pointer-events-auto">
+        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 bg-[#050505]/90 p-2 md:p-3 rounded border border-gray-900/50 backdrop-blur-sm shadow-sm shadow-black">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-green-500 text-lg">➜</span>
+              <span className="text-white font-bold tracking-wide text-base md:text-lg">HEANAN BIRD</span>
+              <span className="text-gray-600 hidden md:inline">::</span>
+              <span className="text-gray-400 hidden md:inline">PROGRAM MANAGER</span>
+            </div>
+            <span className="text-gray-400 text-xs md:hidden pl-6">PROGRAM MANAGER</span>
           </div>
-          <div className="h-3 w-px bg-gray-800 mx-2"></div>
-          <div className="flex gap-4">
+          <div className="hidden md:block h-4 w-px bg-gray-800"></div>
+          <div className="flex gap-3 md:gap-4 text-xs md:text-sm pl-6 md:pl-0">
             <a href="https://www.linkedin.com/in/heanan-brody-bird-pmp-7ab559220" 
                target="_blank" 
                rel="noreferrer" 
                className="text-gray-500 hover:text-blue-400 transition-colors">
-              [ LINKEDIN_UPLINK ]
+              [ LINKEDIN ]
             </a>
             <a href="https://github.com/Birdbh" 
                target="_blank" 
                rel="noreferrer" 
                className="text-gray-500 hover:text-green-400 transition-colors">
-              [ GITHUB_REPO ]
+              [ GITHUB ]
             </a>
           </div>
         </div>
@@ -374,53 +444,53 @@ const App = () => {
 
       {/* DETAIL OVERLAY */}
       {lockedLane && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-          <div className="relative w-full max-w-xl bg-[#0a0a0a]/95 border p-5 pointer-events-auto backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.8)] mt-0"
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none p-3 md:p-0">
+          <div className="relative w-full max-w-xl max-h-[80vh] overflow-hidden bg-[#0a0a0a]/95 border p-4 md:p-5 pointer-events-auto backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.8)] rounded"
                style={{ 
                  '--stream-color': dataStreams[lockedLane].color, 
                  borderColor: dataStreams[lockedLane].color,
                  boxShadow: `0 0 40px ${dataStreams[lockedLane].color}15` 
                }}>
             
-            <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight" style={{ color: dataStreams[lockedLane].color }}>
-                 {`${lockedLane.toUpperCase()}_STREAM_DATA`}
+            <div className="flex justify-between items-start gap-2 mb-4 border-b border-gray-800 pb-3">
+              <h2 className="text-lg md:text-2xl font-bold tracking-tight" style={{ color: dataStreams[lockedLane].color }}>
+                 {`${lockedLane.toUpperCase()}_STREAM`}
               </h2>
               <button 
                 onClick={() => setLockedLane(null)}
-                className="text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors border border-gray-800 hover:border-gray-500 px-3 py-1 rounded bg-black"
+                className="shrink-0 text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors border border-gray-800 hover:border-gray-500 px-2 py-1 rounded bg-black whitespace-nowrap"
               >
-                [ CLOSE_TERMINAL ]
+                [ CLOSE ]
               </button>
             </div>
 
-            <div className="space-y-6 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+            <div className="space-y-4 md:space-y-6 max-h-[55vh] overflow-y-auto custom-scrollbar pr-2">
               {dataStreams[lockedLane].content.map((item, idx) => (
-                <div key={idx} className="group relative pl-3 border-l-2 border-gray-800 transition-colors py-1"
+                <div key={idx} className="group relative pl-3 border-l-2 border-gray-800 transition-colors py-2"
                      style={{ '--stream-color': dataStreams[lockedLane].color }}>
                   
                   <div className="flex flex-col mb-2">
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-sm md:text-base font-bold text-gray-200 group-hover:text-white transition-colors">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1">
+                        <h3 className="text-xs md:text-base font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">
                         {item.title}
                         </h3>
                          {item.status && (
-                            <span className="text-[9px] text-gray-600 border border-gray-800 px-1 rounded ml-2 hidden sm:inline-block whitespace-nowrap">
+                            <span className="text-[8px] md:text-[9px] text-gray-600 border border-gray-800 px-1 rounded self-start md:ml-2 whitespace-nowrap">
                                 {item.status}
                             </span>
                         )}
                     </div>
                     {(item.date || item.loc) && (
-                        <div className="text-[10px] text-gray-500 font-mono mt-1">
+                        <div className="text-[9px] md:text-[10px] text-gray-500 font-mono mt-1">
                             {item.date} {item.loc ? `// ${item.loc}` : ''}
                         </div>
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    {item.org && <div className="text-gray-400 text-[10px] font-bold tracking-wide uppercase">{item.org}</div>}
-                    {item.log && <div className="text-gray-300 text-xs font-mono leading-relaxed">{item.log}</div>}
-                    {item.log2 && <div className="text-gray-300 text-xs font-mono leading-relaxed">{item.log2}</div>}
+                  <div className="space-y-1 md:space-y-2">
+                    {item.org && <div className="text-gray-400 text-[9px] md:text-[10px] font-bold tracking-wide uppercase">{item.org}</div>}
+                    {item.log && <div className="text-gray-300 text-[10px] md:text-xs font-mono leading-relaxed">{item.log}</div>}
+                    {item.log2 && <div className="text-gray-300 text-[10px] md:text-xs font-mono leading-relaxed">{item.log2}</div>}
                   </div>
                 </div>
               ))}
@@ -437,29 +507,31 @@ const App = () => {
         </div>
       )}
 
-      {!lockedLane && !activeLane && (
-        <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 text-center text-gray-800 text-xs animate-pulse pointer-events-none tracking-widest uppercase">
-          [ INTERCEPT DATA STREAMS TO VIEW ]
+      {!lockedLane && (
+        <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 text-center text-gray-700 text-sm md:text-base animate-pulse pointer-events-none tracking-wide uppercase px-4">
+          {isMobile ? '[ TAP A STREAM TO VIEW ]' : '[ HOVER & CLICK STREAMS TO VIEW ]'}
         </div>
       )}
 
        {/* FOOTER STATS */}
-       <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#080808] border-t border-gray-900 px-4 py-2 font-mono text-[10px] text-gray-500 flex justify-between md:justify-center md:gap-12 overflow-x-auto whitespace-nowrap select-none">
-        <span className="hover:text-gray-300 transition-colors">
-            CREDIT_HOURS_LOGGED: <span className="text-green-500">162</span>
-        </span>
-        <span className="hover:text-gray-300 transition-colors">
-            LECTURE_HOURS_ATTENDED: <span className="text-blue-500">5,400</span>
-        </span>
-        <span className="hover:text-gray-300 transition-colors">
-            DATA_INTEGRITY_VIOLATIONS: <span className="text-red-500">ERR_OVERFLOW</span>
-        </span>
-        <span className="hover:text-gray-300 transition-colors">
-            PICKLEBALL_PTS_LOST: <span className="text-yellow-500">404</span>
-        </span>
-        <span className="hover:text-gray-300 transition-colors">
-            PB&B_SANDWICHES_EATEN: <span className="text-purple-500">1,024</span>
-        </span>
+       <div className="absolute bottom-0 left-0 right-0 z-40 bg-[#080808] border-t border-gray-900 px-2 md:px-4 py-2 font-mono text-[8px] md:text-[11px] text-gray-500 select-none">
+        <div className="flex justify-center gap-x-2 md:gap-x-6 overflow-x-auto whitespace-nowrap">
+          <span className="hover:text-gray-300 transition-colors">
+              CREDIT_HOURS_LOGGED: <span className="text-green-500">162</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              LECTURE_HOURS_ATTENDED: <span className="text-blue-500">5,400</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              DATA_INTEGRITY_VIOLATIONS: <span className="text-red-500">ERR_OVERFLOW</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              PICKLEBALL_PTS_LOST: <span className="text-yellow-500">404</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              PB&B_SANDWICHES_EATEN: <span className="text-purple-500">1,024</span>
+          </span>
+        </div>
       </div>
     </div>
   );
