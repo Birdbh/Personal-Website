@@ -138,6 +138,9 @@ const App = () => {
   const particles = useRef([]);
   const animationFrameId = useRef(null);
   const mousePos = useRef({ x: -1000, y: -1000 });
+  
+  // Touch tracking to differentiate tap from scroll
+  const touchStart = useRef({ x: 0, y: 0, time: 0 });
 
   // Check if mobile
   useEffect(() => {
@@ -344,6 +347,7 @@ const App = () => {
     e.preventDefault();
     const rect = containerRef.current.getBoundingClientRect();
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const y = clientY - rect.top;
     const usableHeight = dimensions.h * 0.65;
     const topOffset = dimensions.h * 0.15;
@@ -361,6 +365,39 @@ const App = () => {
     }
   };
 
+  // Touch handlers to differentiate tap from scroll
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+  };
+
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - touchStart.current.x);
+    const dy = Math.abs(touch.clientY - touchStart.current.y);
+    const dt = Date.now() - touchStart.current.time;
+    
+    // Only register as tap if moved less than 10px and less than 300ms
+    if (dx < 10 && dy < 10 && dt < 300) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const y = touch.clientY - rect.top;
+      const usableHeight = dimensions.h * 0.65;
+      const topOffset = dimensions.h * 0.15;
+      const laneHeight = usableHeight / 4;
+      const adjustedY = y - topOffset;
+      const laneIndex = Math.floor(adjustedY / laneHeight);
+      
+      if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) {
+        const keys = Object.keys(dataStreams);
+        if (lockedLane === keys[laneIndex]) {
+          setLockedLane(null);
+        } else {
+          setLockedLane(keys[laneIndex]);
+        }
+      }
+    }
+  };
+
   return (
     <div 
       ref={containerRef} 
@@ -370,7 +407,8 @@ const App = () => {
         ref={canvasRef}
         onMouseMove={handleMouseMove}
         onClick={handleClick}
-        onTouchStart={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         className="absolute top-0 left-0 cursor-crosshair z-10"
       />
 
@@ -406,53 +444,53 @@ const App = () => {
 
       {/* DETAIL OVERLAY */}
       {lockedLane && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none p-2 md:p-0">
-          <div className="relative w-full max-w-xl max-h-[85vh] overflow-hidden bg-[#0a0a0a]/95 border p-4 md:p-5 pointer-events-auto backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.8)] rounded"
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none p-3 md:p-0">
+          <div className="relative w-full max-w-xl max-h-[80vh] overflow-hidden bg-[#0a0a0a]/95 border p-4 md:p-5 pointer-events-auto backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.8)] rounded"
                style={{ 
                  '--stream-color': dataStreams[lockedLane].color, 
                  borderColor: dataStreams[lockedLane].color,
                  boxShadow: `0 0 40px ${dataStreams[lockedLane].color}15` 
                }}>
             
-            <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight" style={{ color: dataStreams[lockedLane].color }}>
-                 {`${lockedLane.toUpperCase()}_STREAM_DATA`}
+            <div className="flex justify-between items-start gap-2 mb-4 border-b border-gray-800 pb-3">
+              <h2 className="text-lg md:text-2xl font-bold tracking-tight" style={{ color: dataStreams[lockedLane].color }}>
+                 {`${lockedLane.toUpperCase()}_STREAM`}
               </h2>
               <button 
                 onClick={() => setLockedLane(null)}
-                className="text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors border border-gray-800 hover:border-gray-500 px-3 py-1 rounded bg-black"
+                className="shrink-0 text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors border border-gray-800 hover:border-gray-500 px-2 py-1 rounded bg-black whitespace-nowrap"
               >
-                [ CLOSE_TERMINAL ]
+                [ CLOSE ]
               </button>
             </div>
 
-            <div className="space-y-6 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+            <div className="space-y-4 md:space-y-6 max-h-[55vh] overflow-y-auto custom-scrollbar pr-2">
               {dataStreams[lockedLane].content.map((item, idx) => (
-                <div key={idx} className="group relative pl-3 border-l-2 border-gray-800 transition-colors py-1"
+                <div key={idx} className="group relative pl-3 border-l-2 border-gray-800 transition-colors py-2"
                      style={{ '--stream-color': dataStreams[lockedLane].color }}>
                   
                   <div className="flex flex-col mb-2">
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-sm md:text-base font-bold text-gray-200 group-hover:text-white transition-colors">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1">
+                        <h3 className="text-xs md:text-base font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">
                         {item.title}
                         </h3>
                          {item.status && (
-                            <span className="text-[9px] text-gray-600 border border-gray-800 px-1 rounded ml-2 hidden sm:inline-block whitespace-nowrap">
+                            <span className="text-[8px] md:text-[9px] text-gray-600 border border-gray-800 px-1 rounded self-start md:ml-2 whitespace-nowrap">
                                 {item.status}
                             </span>
                         )}
                     </div>
                     {(item.date || item.loc) && (
-                        <div className="text-[10px] text-gray-500 font-mono mt-1">
+                        <div className="text-[9px] md:text-[10px] text-gray-500 font-mono mt-1">
                             {item.date} {item.loc ? `// ${item.loc}` : ''}
                         </div>
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    {item.org && <div className="text-gray-400 text-[10px] font-bold tracking-wide uppercase">{item.org}</div>}
-                    {item.log && <div className="text-gray-300 text-xs font-mono leading-relaxed">{item.log}</div>}
-                    {item.log2 && <div className="text-gray-300 text-xs font-mono leading-relaxed">{item.log2}</div>}
+                  <div className="space-y-1 md:space-y-2">
+                    {item.org && <div className="text-gray-400 text-[9px] md:text-[10px] font-bold tracking-wide uppercase">{item.org}</div>}
+                    {item.log && <div className="text-gray-300 text-[10px] md:text-xs font-mono leading-relaxed">{item.log}</div>}
+                    {item.log2 && <div className="text-gray-300 text-[10px] md:text-xs font-mono leading-relaxed">{item.log2}</div>}
                   </div>
                 </div>
               ))}
@@ -476,8 +514,8 @@ const App = () => {
       )}
 
        {/* FOOTER STATS */}
-       <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#080808] border-t border-gray-900 px-2 md:px-4 py-2 font-mono text-[9px] md:text-[11px] text-gray-500 select-none overflow-x-auto">
-        <div className="flex justify-center gap-x-3 md:gap-x-6 whitespace-nowrap min-w-max mx-auto">
+       <div className="absolute bottom-0 left-0 right-0 z-40 bg-[#080808] border-t border-gray-900 px-2 md:px-4 py-2 font-mono text-[8px] md:text-[11px] text-gray-500 select-none">
+        <div className="flex justify-center gap-x-2 md:gap-x-6 overflow-x-auto whitespace-nowrap">
           <span className="hover:text-gray-300 transition-colors">
               CREDIT_HOURS_LOGGED: <span className="text-green-500">162</span>
           </span>
