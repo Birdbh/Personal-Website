@@ -341,26 +341,23 @@ const App = () => {
   };
 
   const handleClick = (e) => {
-    // For mobile, calculate lane from touch position
-    if (isMobile && !lockedLane) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-      const usableHeight = dimensions.h * 0.65;
-      const topOffset = dimensions.h * 0.15;
-      const laneHeight = usableHeight / 4;
-      const adjustedY = y - topOffset;
-      const laneIndex = Math.floor(adjustedY / laneHeight);
-      if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) {
-        const keys = Object.keys(dataStreams);
-        setLockedLane(keys[laneIndex]);
-        return;
-      }
-    }
+    e.preventDefault();
+    const rect = containerRef.current.getBoundingClientRect();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const y = clientY - rect.top;
+    const usableHeight = dimensions.h * 0.65;
+    const topOffset = dimensions.h * 0.15;
+    const laneHeight = usableHeight / 4;
+    const adjustedY = y - topOffset;
+    const laneIndex = Math.floor(adjustedY / laneHeight);
     
-    if (activeLane !== null) {
+    if (laneIndex >= 0 && laneIndex < 4 && adjustedY >= 0) {
       const keys = Object.keys(dataStreams);
-      if (lockedLane === keys[activeLane]) setLockedLane(null);
-      else setLockedLane(keys[activeLane]);
+      if (lockedLane === keys[laneIndex]) {
+        setLockedLane(null);
+      } else {
+        setLockedLane(keys[laneIndex]);
+      }
     }
   };
 
@@ -379,15 +376,18 @@ const App = () => {
 
        {/* HEADER - Responsive */}
        <div className="absolute top-2 left-2 right-2 md:right-auto z-30 font-mono text-sm md:text-base pointer-events-auto">
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 bg-[#050505]/90 p-3 rounded border border-gray-900/50 backdrop-blur-sm shadow-sm shadow-black">
-          <div className="flex items-center gap-2">
-            <span className="text-green-500 text-lg">➜</span>
-            <span className="text-white font-bold tracking-wide text-base md:text-lg">HEANAN BIRD</span>
-            <span className="text-gray-600 hidden md:inline">::</span>
-            <span className="text-gray-400 hidden md:inline">PROGRAM MANAGER</span>
+        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 bg-[#050505]/90 p-2 md:p-3 rounded border border-gray-900/50 backdrop-blur-sm shadow-sm shadow-black">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-green-500 text-lg">➜</span>
+              <span className="text-white font-bold tracking-wide text-base md:text-lg">HEANAN BIRD</span>
+              <span className="text-gray-600 hidden md:inline">::</span>
+              <span className="text-gray-400 hidden md:inline">PROGRAM MANAGER</span>
+            </div>
+            <span className="text-gray-400 text-xs md:hidden pl-6">PROGRAM MANAGER</span>
           </div>
-          <div className="h-px md:h-4 md:w-px bg-gray-800"></div>
-          <div className="flex gap-3 md:gap-4 text-xs md:text-sm">
+          <div className="hidden md:block h-4 w-px bg-gray-800"></div>
+          <div className="flex gap-3 md:gap-4 text-xs md:text-sm pl-6 md:pl-0">
             <a href="https://www.linkedin.com/in/heanan-brody-bird-pmp-7ab559220" 
                target="_blank" 
                rel="noreferrer" 
@@ -403,26 +403,6 @@ const App = () => {
           </div>
         </div>
       </div>
-
-      {/* MOBILE STREAM SELECTOR */}
-      {isMobile && !lockedLane && (
-        <div className="absolute bottom-16 left-2 right-2 z-30 flex flex-col gap-2">
-          {Object.keys(dataStreams).map((key) => (
-            <button
-              key={key}
-              onClick={() => setLockedLane(key)}
-              className="w-full py-3 px-4 text-left font-mono text-sm rounded border transition-all"
-              style={{
-                borderColor: dataStreams[key].color,
-                color: dataStreams[key].color,
-                backgroundColor: 'rgba(5,5,5,0.9)'
-              }}
-            >
-              {`>> ${key.toUpperCase()}_STREAM`}
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* DETAIL OVERLAY */}
       {lockedLane && (
@@ -496,22 +476,22 @@ const App = () => {
       )}
 
        {/* FOOTER STATS */}
-       <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#080808] border-t border-gray-900 px-3 md:px-4 py-2 md:py-3 font-mono text-[11px] md:text-xs text-gray-500 select-none">
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 md:gap-x-8">
+       <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#080808] border-t border-gray-900 px-2 md:px-4 py-2 font-mono text-[9px] md:text-[11px] text-gray-500 select-none overflow-x-auto">
+        <div className="flex justify-center gap-x-3 md:gap-x-6 whitespace-nowrap min-w-max mx-auto">
           <span className="hover:text-gray-300 transition-colors">
-              CREDITS: <span className="text-green-500">162</span>
-          </span>
-          <span className="hover:text-gray-300 transition-colors">
-              LECTURES: <span className="text-blue-500">5,400</span>
-          </span>
-          <span className="hover:text-gray-300 transition-colors hidden md:inline">
-              VIOLATIONS: <span className="text-red-500">ERR</span>
+              CREDIT_HOURS_LOGGED: <span className="text-green-500">162</span>
           </span>
           <span className="hover:text-gray-300 transition-colors">
-              PICKLEBALL: <span className="text-yellow-500">404</span>
+              LECTURE_HOURS_ATTENDED: <span className="text-blue-500">5,400</span>
           </span>
-          <span className="hover:text-gray-300 transition-colors hidden sm:inline">
-              PB&B: <span className="text-purple-500">1,024</span>
+          <span className="hover:text-gray-300 transition-colors">
+              DATA_INTEGRITY_VIOLATIONS: <span className="text-red-500">ERR_OVERFLOW</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              PICKLEBALL_PTS_LOST: <span className="text-yellow-500">404</span>
+          </span>
+          <span className="hover:text-gray-300 transition-colors">
+              PB&B_SANDWICHES_EATEN: <span className="text-purple-500">1,024</span>
           </span>
         </div>
       </div>
