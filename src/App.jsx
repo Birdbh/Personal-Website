@@ -11,7 +11,7 @@ const dataStreams = {
         date: "June 2025 - Present",
         loc: "New York, NY",
         log: ">> Executing projects to create an enterprise-wide common data model and applying advanced analytics to core processes.",
-        log2: ">> Leading development of data products to increase yield for the AMRAAM missile and driving data standardization initiatives within Xeta Cloud.",
+        log2: ">> Development of data products to increase yield for AMRAAM and driving data standardization initiatives within Xeta Cloud.",
         status: "ACTIVE"
       },
       {
