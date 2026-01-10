@@ -10,7 +10,7 @@ const dataStreams = {
         org: "RTX (Raytheon Technologies)",
         date: "June 2025 - Present",
         loc: "New York, NY",
-        log: ">> Leading development of data products to increase yield for AMRAAM missile systems.",
+        log: ">> Development of data products to increase yield for AMRAAM missile systems.",
         log2: ">> Driving data standardization initiatives within Xeta Cloud platform.",
         status: "ACTIVE"
       },
