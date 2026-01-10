@@ -7,11 +7,11 @@ const dataStreams = {
     content: [
       {
         title: "PROGRAM MANAGER - ENTERPRISE SERVICES DATA",
-        org: "Raytheon Technologies (RTX)",
+        org: "RTX (Raytheon Technologies)",
         date: "June 2025 - Present",
         loc: "New York, NY",
-        log: ">> Executing projects to create an enterprise-wide common data model and applying advanced analytics to core processes.",
-        log2: ">> Development of data products to increase yield for AMRAAM and driving data standardization initiatives within Xeta Cloud.",
+        log: ">> Leading development of data products to increase yield for AMRAAM missile systems.",
+        log2: ">> Driving data standardization initiatives within Xeta Cloud platform.",
         status: "ACTIVE"
       },
       {
@@ -19,26 +19,26 @@ const dataStreams = {
         org: "General Motors",
         date: "April 2024 - August 2024",
         loc: "Warren, MI",
-        log: ">> Developed, designed, and organized experiments to study material capabilities for the next generation of electric vehicle production.",
-        log2: ">> Saved $50,000 in battery module production costs by determining optimized module treatment methods through Python surface regression fitting.",
+        log: ">> Designed experiments to study material capabilities for next-gen EV production.",
+        log2: ">> Saved $50K in production costs via Python surface regression optimization.",
         status: "COMPLETE"
       },
       {
-        title: "ANALYTICS ENGINEER (INTERN) - ADVANCED ANALYTICS",
+        title: "ANALYTICS ENGINEER (INTERN)",
         org: "Seeq Corporation",
         date: "June 2023 - August 2023",
         loc: "Seattle, WA",
-        log: ">> Interface directly with clients to customize Seeq systems. Created $450,000 in revenue by constructing an ETL pipeline for Owens Corning.",
-        log2: ">> Discovered $4M in potential gains by designing analytics software with a Vuetify UI to monitor batches and process 2 TB of data.",
+        log: ">> Created $450K in revenue by building ETL pipelines for Owens Corning.",
+        log2: ">> Identified $4M in gains via analytics software processing 2 TB of data.",
         status: "COMPLETE"
       },
       {
-        title: "MANUFACTURING ENGINEER (CO-OP) - POWER SYSTEMS",
-        org: "Raytheon Technologies - Collins Aerospace",
+        title: "MANUFACTURING ENGINEER (CO-OP)",
+        org: "Collins Aerospace (RTX)",
         date: "May 2022 - December 2022",
         loc: "Rockford, IL",
-        log: ">> Optimized human-technology interfaces to decrease costs and streamline production of aerospace generators.",
-        log2: ">> Reduced Boeing generator cleaning cycle time by 50% (27 minutes) by analyzing oil residue data and implementing new cleaning procedures.",
+        log: ">> Reduced Boeing generator cleaning cycle time by 50% through data analysis.",
+        log2: ">> Implemented $10K annual savings via in-house 3D printed filament testing.",
         status: "COMPLETE"
       }
     ]
@@ -47,34 +47,34 @@ const dataStreams = {
     color: '#00b8ff', // Cyber Blue
     content: [
       {
-        title: "SOFTWARE ENGINEERING COMPETITIONS",
-        log: ">> Won 1st place ($600) at HackAttack for e-learning platform (React). Won 2nd place ($1200) at BC Hacks for responsive dorm placement site.",
-        log2: ">> Placed 2nd against 200 students at Okanagan SWE with a Python bomb-sweeping simulation. Stack: Python, Java, HTML, CSS.",
-        status: "AWARDED"
-      },
-      {
-        title: "BOTANICAL AUTOMATION HEALTH SYSTEM",
-        log: ">> Designed greenhouse-health user interface by unifying local microcontroller data collection with online IoT platform.",
-        log2: ">> Leveraged ESP32 wireless connectivity for live data feedback. Stack: C++, ThinkSpeak, IoT, Arduino IDE.",
-        status: "IOT"
-      },
-      {
-        title: "CANCER CELL DATA TRANSFORMATION",
-        log: ">> Discovered 7 key cell features to identify malignant cancer growths by applying machine learning and dimensionality reduction.",
-        log2: ">> Results verified on 10,000 samples from John Hopkins. Stack: PyTorch, Numpy, Pandas, Matplotlib, Seaborn.",
-        status: "ML/AI"
-      },
-      {
-        title: "CSA HIGH ALTITUDE BALLOON CHALLENGE",
-        log: ">> Launched high-altitude balloon with Canadian Space Agency. Designed apparatus to test silicon semiconductor efficiency.",
-        log2: ">> Mitigated single-event upsets through rigorous circuit design and technical writing proposals.",
+        title: "CSA REDUCED GRAVITY EXPERIMENT (CAN-RGX)",
+        log: ">> Selected by Canadian Space Agency for parabolic flight campaign.",
+        log2: ">> Designed apparatus to investigate fluid dynamics in microgravity.",
         status: "AEROSPACE"
       },
       {
-        title: "UBCO CONCRETE TOBOGGAN TEAM",
-        log: ">> Poured 15 batches of experimental concrete and conducted hydraulic press testing for Great Northern Concrete Toboggan Race.",
-        log2: ">> Recorded and analyzed material data to ensure fit within strict competition specification parameters.",
-        status: "CIVIL"
+        title: "WANDER - STANFORD TREEHACKS",
+        log: ">> Built cyber-physical wearable for elder care at Stanford's premier hackathon.",
+        log2: ">> Stack: Embedded Systems, Firebase, OpenAI API, Twilio, Voice Cloning.",
+        status: "HARDWARE"
+      },
+      {
+        title: "MASSROBOTICS FORM & FUNCTION CHALLENGE",
+        log: ">> Global robotics competition for innovative automation solutions.",
+        log2: ">> Developed wildfire detection robotics with machine vision.",
+        status: "ROBOTICS"
+      },
+      {
+        title: "HACKATTACK 1ST PLACE",
+        log: ">> Won $500 for e-learning platform enabling equitable education access.",
+        log2: ">> Built in 48 hours with React and microservices architecture.",
+        status: "AWARDED"
+      },
+      {
+        title: "CSA HIGH ALTITUDE BALLOON (CAN-SBX)",
+        log: ">> Launched stratospheric balloon to test silicon semiconductor SEU mitigation.",
+        log2: ">> Authored technical proposals for Canadian Space Agency funding.",
+        status: "COMPLETE"
       }
     ]
   },
@@ -82,22 +82,27 @@ const dataStreams = {
     color: '#ffb800', // Industrial Amber
     content: [
       {
-        title: "MASTERS IN COMPUTER SCIENCE",
+        title: "MASTER OF COMPUTER SCIENCE",
         org: "University of Illinois Urbana-Champaign",
-        date: "Expected August 2025",
-        log: ">> Specialized in Data Curation and Engineering."
+        date: "Aug 2025 - Present",
+        log: ">> Focus: Data Curation, Foundations of Data Science."
       },
       {
-        title: "BACHELOR OF APPLIED SCIENCE IN ENGINEERING",
-        org: "The University of British Columbia",
+        title: "B.A.SC. MANUFACTURING ENGINEERING",
+        org: "University of British Columbia",
         date: "2020 - 2025",
-        log: ">> Focused on Industrial Automation, hardware-software integration, and project management."
+        log: ">> Minor in Computer Science. Industrial automation & project management."
       },
       {
-        title: "SPECIALIZATION IN ML & DATA ANALYTICS",
-        org: "DTU - Technical University of Denmark",
-        date: "December 2022 - May 2023",
-        log: ">> Exchange program focused on Machine Learning algorithms and large-scale data analytics."
+        title: "EXCHANGE - ML & DATA MINING",
+        org: "Technical University of Denmark",
+        date: "Dec 2022 - May 2023",
+        log: ">> Machine Learning algorithms and large-scale analytics."
+      },
+      {
+        title: "TECHNICAL SKILLS",
+        org: "Languages & Tools",
+        log: ">> Python, Java, SQL, PyTorch, Pandas, React."
       }
     ]
   },
@@ -105,22 +110,22 @@ const dataStreams = {
     color: '#ff0055', // Neon Red
     content: [
       {
-        title: "LIFESTYLE & PACIFIC NORTHWEST",
-        log: ">> Avid Pickleball player and explorer of the Pacific Northwest. Fueled by Earl Grey tea and peanut butter & banana sandwiches.",
-        log2: ">> Constant listener of Brandon Sanderson audiobooks. Enthusiast of personal finance strategies and optimization.",
+        title: "CO-FOUNDER: SPACE MENs",
+        log: ">> Researching fluid dynamics in microgravity for menstrual health in space.",
+        log2: ">> Selected for CSA parabolic flight campaign.",
+        status: "ACTIVE"
+      },
+      {
+        title: "LIFESTYLE",
+        log: ">> Pickleball enthusiast. Earl Grey & PB&B sandwiches fueled.",
+        log2: ">> Brandon Sanderson audiobooks. Personal finance optimization.",
         status: "HOBBY"
       },
       {
-        title: "WORK PHILOSOPHY & COMMUNICATION",
-        log: ">> Strong advocate for company handbooks as the single source of truth and asynchronous communication workflows.",
-        log2: ">> Proponent of AI-driven search tools and establishing good international communication practices.",
+        title: "WORK PHILOSOPHY",
+        log: ">> Advocate for async communication & documentation-first culture.",
+        log2: ">> Proponent of AI-driven tooling and clear handbooks.",
         status: "ETHOS"
-      },
-      {
-        title: "CO-FOUNDER: SPACE MENs",
-        log: ">> Leading an engineering team to develop technical visualizations and research fluid dynamics in microgravity.",
-        log2: ">> Managing cross-platform social media presence to communicate our mission of addressing menstrual health in space exploration.",
-        status: "PASSION"
       }
     ]
   }
@@ -401,7 +406,7 @@ const App = () => {
   return (
     <div 
       ref={containerRef} 
-      className="w-full h-screen bg-[#050505] overflow-hidden relative font-mono select-none"
+      className="w-full h-[100dvh] bg-[#050505] overflow-hidden relative font-mono select-none"
     >
       <canvas
         ref={canvasRef}
@@ -514,22 +519,22 @@ const App = () => {
       )}
 
        {/* FOOTER STATS */}
-       <div className="absolute bottom-0 left-0 right-0 z-40 bg-[#080808] border-t border-gray-900 px-2 md:px-4 py-2 font-mono text-[8px] md:text-[11px] text-gray-500 select-none">
-        <div className="flex justify-center gap-x-2 md:gap-x-6 overflow-x-auto whitespace-nowrap">
+       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#080808]/95 border-t border-gray-900 px-2 md:px-4 py-2 md:py-2 font-mono text-[8px] md:text-[11px] text-gray-500 select-none backdrop-blur-sm safe-bottom">
+        <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 md:gap-x-6 md:flex-nowrap">
           <span className="hover:text-gray-300 transition-colors">
-              CREDIT_HOURS_LOGGED: <span className="text-green-500">162</span>
+              CREDIT_HRS: <span className="text-green-500">162</span>
           </span>
           <span className="hover:text-gray-300 transition-colors">
-              LECTURE_HOURS_ATTENDED: <span className="text-blue-500">5,400</span>
+              LECTURE_HRS: <span className="text-blue-500">5,400</span>
           </span>
           <span className="hover:text-gray-300 transition-colors">
-              DATA_INTEGRITY_VIOLATIONS: <span className="text-red-500">ERR_OVERFLOW</span>
+              DATA_ERRORS: <span className="text-red-500">ERR</span>
           </span>
           <span className="hover:text-gray-300 transition-colors">
-              PICKLEBALL_PTS_LOST: <span className="text-yellow-500">404</span>
+              PICKLEBALL_L: <span className="text-yellow-500">404</span>
           </span>
           <span className="hover:text-gray-300 transition-colors">
-              PB&B_SANDWICHES_EATEN: <span className="text-purple-500">1,024</span>
+              PB&B_EATEN: <span className="text-purple-500">1,024</span>
           </span>
         </div>
       </div>

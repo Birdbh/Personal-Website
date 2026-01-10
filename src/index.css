@@ -8,10 +8,42 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Enable safe area insets for notched devices */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
 body {
   font-family: 'Courier New', monospace;
   background-color: #050505;
   overflow: hidden;
+  /* Ensure full height on mobile */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Safe bottom padding for footer on notched devices */
+.safe-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Subtle scanline effect for CRT feel */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 50;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -29,4 +61,13 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #fff;
+}
+
+/* Subtle glow on hover for interactive elements */
+.glow-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 15px currentColor;
 }
