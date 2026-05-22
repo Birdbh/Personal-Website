@@ -420,7 +420,7 @@ const App = () => {
               <span className="text-green-500 text-lg">➜</span>
               <span className="text-white font-bold tracking-wide text-base md:text-lg">HEANAN BIRD</span>
               <span className="text-gray-600 hidden md:inline">::</span>
-              <span className="text-gray-400 hidden md:inline">PROGRAM MANAGER</span>
+              <span className="text-gray-400 hidden md:inline">ENGINEER</span>
             </div>
             <span className="text-gray-400 text-xs md:hidden pl-6">PROGRAM MANAGER</span>
           </div>
