@@ -6,7 +6,7 @@ const dataStreams = {
     color: '#00ff41', // Matrix Green
     content: [
       {
-        title: "UDER DEVELOPMENT",
+        title: "UNDER DEVELOPMENT",
         org: "",
         date: "",
         loc: "",
