@@ -58,7 +58,7 @@ const dataStreams = {
         title: "MASTERS IN COMPUTER SCIENCE",
         org: "University of Illinois Urbana-Champaign",
         date: "Expected August 2025",
-        log: ">> Specialized in Data Curation and Engineering."
+        log: ">> Specialized in Solving Hard Problems."
       },
       {
         title: "BACHELOR OF APPLIED SCIENCE IN ENGINEERING",
