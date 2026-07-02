@@ -6,40 +6,13 @@ const dataStreams = {
     color: '#00ff41', // Matrix Green
     content: [
       {
-        title: "PROGRAM MANAGER - ENTERPRISE SERVICES DATA",
-        org: "Raytheon Technologies (RTX)",
-        date: "June 2025 - Present",
-        loc: "New York, NY",
-        log: ">> Executing projects to create an enterprise-wide common data model and applying advanced analytics to core processes.",
-        log2: ">> Development of data products to increase yield for AMRAAM and driving data standardization initiatives within Xeta Cloud.",
+        title: "UDER DEVELOPMENT",
+        org: "",
+        date: "",
+        loc: "",
+        log: "",
+        log2: "",
         status: "ACTIVE"
-      },
-      {
-        title: "R&D ENGINEER (INTERN) - BATTERY MODULES",
-        org: "General Motors",
-        date: "April 2024 - August 2024",
-        loc: "Warren, MI",
-        log: ">> Developed, designed, and organized experiments to study material capabilities for the next generation of electric vehicle production.",
-        log2: ">> Saved $50,000 in battery module production costs by determining optimized module treatment methods through Python surface regression fitting.",
-        status: "COMPLETE"
-      },
-      {
-        title: "ANALYTICS ENGINEER (INTERN) - ADVANCED ANALYTICS",
-        org: "Seeq Corporation",
-        date: "June 2023 - August 2023",
-        loc: "Seattle, WA",
-        log: ">> Interface directly with clients to customize Seeq systems. Created $450,000 in revenue by constructing an ETL pipeline for Owens Corning.",
-        log2: ">> Discovered $4M in potential gains by designing analytics software with a Vuetify UI to monitor batches and process 2 TB of data.",
-        status: "COMPLETE"
-      },
-      {
-        title: "MANUFACTURING ENGINEER (CO-OP) - POWER SYSTEMS",
-        org: "Raytheon Technologies - Collins Aerospace",
-        date: "May 2022 - December 2022",
-        loc: "Rockford, IL",
-        log: ">> Optimized human-technology interfaces to decrease costs and streamline production of aerospace generators.",
-        log2: ">> Reduced Boeing generator cleaning cycle time by 50% (27 minutes) by analyzing oil residue data and implementing new cleaning procedures.",
-        status: "COMPLETE"
       }
     ]
   },
